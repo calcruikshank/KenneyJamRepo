@@ -255,16 +255,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), 3);
         }
 
-        if (!grounded)
+        if (!grounded && new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude <= (inputMovement * maxSpeed).magnitude)
         {
-            if (rb.velocity.x < inputMovement.x * maxSpeed && inputMovement.x > 0)
-            {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
-            }
-            if (rb.velocity.x > inputMovement.x * maxSpeed && inputMovement.x < 0)
-            {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
-            }
+            rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
         }
 
         if(new Vector3(rb.velocity.x,0f,rb.velocity.z).magnitude >= 0.15f)
