@@ -46,7 +46,8 @@ public class PlayerController : MonoBehaviour
     {
         Normal,
         Knockback,
-        Dashing
+        Dashing,
+        Diving
     }
 
     public State state;
@@ -101,12 +102,10 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.1f, groundLayer))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
         }
 
         if (hit.collider != null)
         {
-            Debug.Log("Collider touching ground");
             colliderIsTouchingGround = true;
         }
         if (hit.collider == null)
@@ -172,7 +171,10 @@ public class PlayerController : MonoBehaviour
                     if (!grounded && !groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
                     {
                         currentNumOfExtraJumps++;
-                        rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
+                        if (movement.magnitude > 0)
+                        {
+                            rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
+                        }
                         Jump();
                         inputQueue.Dequeue();
                     }
@@ -190,14 +192,17 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
-                if (currentBufferedInput.actionType == KenneyJamData.InputActionType.DASH)
+                if (currentBufferedInput.actionType == KenneyJamData.InputActionType.DIVE)
                 {
                     if (state == State.Normal)
                     {
-                        float targetAngleDive = Mathf.Atan2(currentBufferedInput.directionOfAction.x, currentBufferedInput.directionOfAction.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
-                        Vector3 diveDir = Quaternion.Euler(0, targetAngleDive, 0) * Vector3.forward;
-                        //Dive(diveDir);
-                        inputQueue.Dequeue();
+                        if (!grounded)
+                        {
+                            float targetAngleDive = Mathf.Atan2(currentBufferedInput.directionOfAction.x, currentBufferedInput.directionOfAction.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                            Vector3 diveDir = Quaternion.Euler(0, targetAngleDive, 0) * Vector3.forward;
+                            //Dive();
+                            inputQueue.Dequeue();
+                        }
                     }
                 }
             }
@@ -207,13 +212,9 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void Dive(Vector2 directionOfDash)
+    private void Dive()
     {
-        transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
-        dashDir = directionOfDash;
-        currentDashSpeed = dashSpeed;
-        SetStateToDashing();
-        canDash = false;
+        SetStateToDiving();
     }
     private void HandleDive()
     {
@@ -378,5 +379,9 @@ public class PlayerController : MonoBehaviour
     private void SetStateToNormal()
     {
         state = State.Normal;
+    }
+    private void SetStateToDiving()
+    {
+        state = State.Diving;
     }
 }
