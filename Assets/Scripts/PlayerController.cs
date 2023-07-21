@@ -37,6 +37,9 @@ public class PlayerController : MonoBehaviour
 
     public Transform cam;
 
+     float timerForDashing;
+     float timerForDashingThreshold = .5f;
+
     public Animator playerAnim;
 
     public enum State
@@ -64,6 +67,7 @@ public class PlayerController : MonoBehaviour
         HandleBufferInput();
         CheckForGround();
         GetLastMoveDirection();
+        HandleTimers();
 
         switch (state)
         {
@@ -75,6 +79,11 @@ public class PlayerController : MonoBehaviour
                 HandleDash();
                 break;
         }
+    }
+
+    private void HandleTimers()
+    {
+        timerForDashing += Time.deltaTime;
     }
 
     private void GetLastMoveDirection()
@@ -110,7 +119,10 @@ public class PlayerController : MonoBehaviour
         if (colliderIsTouchingGround && !groundHasNotBeenLeftAfterJumping)
         {
             grounded = true;
-            canDash = true;
+            if (timerForDashing >= timerForDashingThreshold)
+            {
+                canDash = true;
+            }
             jumpedOutOfDash = false;
             currentNumOfExtraJumps = 0;
         }
@@ -154,13 +166,13 @@ public class PlayerController : MonoBehaviour
                     if (grounded)
                     {
                         Jump();
+                        canDash = true;
                         inputQueue.Dequeue();
                     }
                     if (!grounded && !groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
                     {
                         currentNumOfExtraJumps++;
                         rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
-                        transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
                         Jump();
                         inputQueue.Dequeue();
                     }
@@ -215,6 +227,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Dash(Vector2 directionOfDash)
     {
+        timerForDashing = 0f;
         FaceLookDirection();
         transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
         dashDir = directionOfDash;
@@ -244,6 +257,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        timerForDashing = timerForDashingThreshold + 1;
         if (state == State.Dashing)
         {
             jumpedOutOfDash = true;
@@ -275,7 +289,6 @@ public class PlayerController : MonoBehaviour
         }
         playerAnim.SetBool("dashing", false);
         playerAnim.SetBool("falling", false);
-
         SetStateToNormal();
     }
 
