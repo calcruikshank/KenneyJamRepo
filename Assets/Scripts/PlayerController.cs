@@ -84,15 +84,20 @@ public class PlayerController : MonoBehaviour
 
     private void CheckForGround()
     {
-        grounded = true;
-        return;
-        var groundedRay = Physics2D.Raycast(transform.position, Vector2.down, 0.1f + col.bounds.size.y / 2, groundLayer);
-
-        if (groundedRay.collider != null)
+        RaycastHit hit;
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.1f, groundLayer))
         {
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
+            Debug.Log("Did Hit");
+        }
+
+        if (hit.collider != null)
+        {
+            Debug.Log("Collider touching ground");
             colliderIsTouchingGround = true;
         }
-        if (groundedRay.collider == null)
+        if (hit.collider == null)
         {
             colliderIsTouchingGround = false;
             groundHasNotBeenLeftAfterJumping = false;
@@ -143,7 +148,7 @@ public class PlayerController : MonoBehaviour
                     if (!grounded && !groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
                     {
                         currentNumOfExtraJumps++;
-                        rb.velocity = new Vector2(movement.x * maxSpeed, 0);
+                        rb.velocity = new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude);//todo
                         Jump();
                         inputQueue.Dequeue();
                     }
@@ -152,14 +157,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (state == State.Normal)
                     {
-                        if (grounded)
-                        {
-                            Dash(new Vector2(currentBufferedInput.directionOfAction.x, 0));
-                        }
-                        else
-                        {
-                            Dash(currentBufferedInput.directionOfAction);
-                        }
+                        Dash(moveDir);
                         inputQueue.Dequeue();
                     }
                 }
@@ -182,14 +180,13 @@ public class PlayerController : MonoBehaviour
         float powerDashSpeedMulti = 6f;
         currentDashSpeed -= currentDashSpeed * powerDashSpeedMulti * Time.deltaTime;
 
-        if (currentDashSpeed < 5f)
-        {
+        if (currentDashSpeed < 5f) { 
             SetStateToNormal();
         }
     }
     private void FixedHandleDash()
     {
-        rb.velocity = new Vector3(dashDir.x * currentDashSpeed, dashDir.y * currentDashSpeed);
+        rb.velocity = new Vector3(dashDir.x * currentDashSpeed, 0, dashDir.z * currentDashSpeed);
     }
 
 
@@ -197,7 +194,7 @@ public class PlayerController : MonoBehaviour
     {
         groundHasNotBeenLeftAfterJumping = true;
         grounded = false;
-        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.AddForce(Vector2.up * jumpHeight, ForceMode.Impulse);
         SetStateToNormal();
     }
@@ -221,11 +218,11 @@ public class PlayerController : MonoBehaviour
         {
             if (rb.velocity.x < inputMovement.x * maxSpeed && inputMovement.x > 0)
             {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(movement.x * maxSpeed, rb.velocity.y, movement.z * maxSpeed), 2);
+                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude * maxSpeed), .5f);
             }
             if (rb.velocity.x > inputMovement.x * maxSpeed && inputMovement.x < 0)
             {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(movement.x * maxSpeed, rb.velocity.y, movement.z * maxSpeed), 2);
+                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
             }
         }
     }
