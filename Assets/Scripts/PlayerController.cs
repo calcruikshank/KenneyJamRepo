@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
     public Transform cam;
 
+    public Animator playerAnim;
 
     public enum State
     {
@@ -116,6 +117,8 @@ public class PlayerController : MonoBehaviour
         {
             grounded = false;
         }
+
+        playerAnim.SetBool("airborne", !grounded);
     }
 
     void FixedUpdate()
@@ -219,6 +222,7 @@ public class PlayerController : MonoBehaviour
 
         if (currentDashSpeed < 20f) { 
             SetStateToNormal();
+            playerAnim.SetBool("dashing", false);
         }
     }
     private void FixedHandleDash()
@@ -262,6 +266,15 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
             }
         }
+
+        if(new Vector3(rb.velocity.x,0f,rb.velocity.z).magnitude >= 0.15f)
+        {
+            playerAnim.SetBool("moving", true);
+        }
+        else
+        {
+            playerAnim.SetBool("moving", false);
+        }
     }
     float targetAngle;
     void FaceLookDirection()
@@ -290,12 +303,23 @@ public class PlayerController : MonoBehaviour
     {
         BufferInput jumpBuffer = new BufferInput(KenneyJamData.InputActionType.JUMP, inputMovement, Time.time);
         inputQueue.Enqueue(jumpBuffer);
+
+        if(state == State.Dashing)
+        {
+            playerAnim.SetTrigger("longjump");
+        }
+        else
+        {
+            playerAnim.SetTrigger("jump");
+        }
+        playerAnim.SetBool("dashing", false);
     }
 
     void OnDash()
     {
         BufferInput dashBuffer = new BufferInput(KenneyJamData.InputActionType.DASH, lastMoveDir.normalized, Time.time);
         inputQueue.Enqueue(dashBuffer);
+        playerAnim.SetBool("dashing", true);
     }
     void OnDive()
     {
