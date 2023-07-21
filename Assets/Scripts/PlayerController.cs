@@ -119,6 +119,10 @@ public class PlayerController : MonoBehaviour
         }
 
         playerAnim.SetBool("airborne", !grounded);
+        if (grounded)
+        {
+            playerAnim.SetBool("falling", false);
+        }
     }
 
     void FixedUpdate()
@@ -268,6 +272,11 @@ public class PlayerController : MonoBehaviour
         {
             playerAnim.SetBool("moving", false);
         }
+
+        if(rb.velocity.y <= -5f && playerAnim.GetBool("falling") == false)
+        {
+            playerAnim.SetBool("falling", true);
+        }
     }
     float targetAngle;
     void FaceLookDirection()
@@ -306,6 +315,8 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetTrigger("jump");
         }
         playerAnim.SetBool("dashing", false);
+        playerAnim.SetBool("falling", false);
+
     }
 
     void OnDash()
@@ -313,6 +324,7 @@ public class PlayerController : MonoBehaviour
         BufferInput dashBuffer = new BufferInput(KenneyJamData.InputActionType.DASH, lastMoveDir.normalized, Time.time);
         inputQueue.Enqueue(dashBuffer);
         playerAnim.SetBool("dashing", true);
+        playerAnim.SetBool("falling", false);
     }
     void OnDive()
     {
