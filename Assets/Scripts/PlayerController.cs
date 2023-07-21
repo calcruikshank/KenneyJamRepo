@@ -168,6 +168,16 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
+                if (currentBufferedInput.actionType == KenneyJamData.InputActionType.DASH)
+                {
+                    if (state == State.Normal)
+                    {
+                        float targetAngleDive = Mathf.Atan2(currentBufferedInput.directionOfAction.x, currentBufferedInput.directionOfAction.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                        Vector3 diveDir = Quaternion.Euler(0, targetAngleDive, 0) * Vector3.forward;
+                        Dive(diveDir);
+                        inputQueue.Dequeue();
+                    }
+                }
             }
             if (Time.time - currentBufferedInput.timeOfInput >= bufferTimerThreshold)
             {
@@ -175,9 +185,27 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+    private void Dive(Vector2 directionOfDash)
+    {
+        transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
+        dashDir = directionOfDash;
+        currentDashSpeed = dashSpeed;
+        SetStateToDashing();
+        canDash = false;
+    }
+    private void HandleDive()
+    {
+        float powerDashSpeedMulti = 2f;
+        currentDashSpeed -= currentDashSpeed * powerDashSpeedMulti * Time.deltaTime;
 
+        if (currentDashSpeed < 20f)
+        {
+            SetStateToNormal();
+        }
+    }
     private void Dash(Vector2 directionOfDash)
     {
+        FaceLookDirection();
         transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
         dashDir = directionOfDash;
         currentDashSpeed = dashSpeed;
@@ -227,7 +255,7 @@ public class PlayerController : MonoBehaviour
         {
             if (rb.velocity.x < inputMovement.x * maxSpeed && inputMovement.x > 0)
             {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude * maxSpeed), .5f);
+                rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
             }
             if (rb.velocity.x > inputMovement.x * maxSpeed && inputMovement.x < 0)
             {
@@ -268,6 +296,11 @@ public class PlayerController : MonoBehaviour
     {
         BufferInput dashBuffer = new BufferInput(KenneyJamData.InputActionType.DASH, lastMoveDir.normalized, Time.time);
         inputQueue.Enqueue(dashBuffer);
+    }
+    void OnDive()
+    {
+        BufferInput diveBuffer = new BufferInput(KenneyJamData.InputActionType.DIVE, lastMoveDir.normalized, Time.time);
+        inputQueue.Enqueue(diveBuffer);
     }
 
     private void SetStateToDashing()

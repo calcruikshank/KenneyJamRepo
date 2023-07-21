@@ -7,6 +7,7 @@ public class KenneyJamData : MonoBehaviour
     public enum InputActionType
     {
         JUMP,
-        DASH
+        DASH,
+        DIVE
     }
 }
