@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour
     public State state;
     float bufferTimerThreshold = .2f;
 
+    public ParticleSystem groundParticles;
+    public ParticleSystem jumpParticles;
 
     // Start is called before the first frame update
     void Start()
@@ -131,6 +133,8 @@ public class PlayerController : MonoBehaviour
             grounded = false;
         }
 
+        var emission = groundParticles.emission;
+        emission.enabled = grounded;
         playerAnim.SetBool("airborne", !grounded);
         if (grounded)
         {
@@ -288,6 +292,7 @@ public class PlayerController : MonoBehaviour
         {
             playerAnim.SetTrigger("jump");
         }
+        jumpParticles.Play();
         playerAnim.SetBool("dashing", false);
         playerAnim.SetBool("falling", false);
         SetStateToNormal();
