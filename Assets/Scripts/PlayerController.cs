@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), out hit, 1.1f, groundLayer))
+        if (Physics.BoxCast(transform.position, transform.GetComponent<Collider>().bounds.size / 2, transform.TransformDirection(Vector3.down), out hit, Quaternion.identity, 1.1f, groundLayer))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
         }
