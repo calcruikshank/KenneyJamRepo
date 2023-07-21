@@ -77,3 +77,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac15b4ee0244834fa1877a108084697, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viableTilesNorth:
+  - {fileID: 5820844338514852265, guid: 109137f27ef366243ac6b7f7dbadf26b, type: 3}
+  - {fileID: 2845569537506417842}
+  - {fileID: 4824159831788438360, guid: 3527f8593fbcc834c87d7f376a92bd93, type: 3}
+  viableTilesEast:
+  - {fileID: 5820844338514852265, guid: 109137f27ef366243ac6b7f7dbadf26b, type: 3}
+  - {fileID: 2845569537506417842}
+  - {fileID: 4824159831788438360, guid: 3527f8593fbcc834c87d7f376a92bd93, type: 3}
+  viableTileWest:
+  - {fileID: 5820844338514852265, guid: 109137f27ef366243ac6b7f7dbadf26b, type: 3}
+  - {fileID: 2845569537506417842}
+  - {fileID: 4824159831788438360, guid: 3527f8593fbcc834c87d7f376a92bd93, type: 3}
+  viableTilesSouth:
+  - {fileID: 5820844338514852265, guid: 109137f27ef366243ac6b7f7dbadf26b, type: 3}
+  - {fileID: 2845569537506417842}
+  - {fileID: 4824159831788438360, guid: 3527f8593fbcc834c87d7f376a92bd93, type: 3}
+  viableTilesDown: []
+  viableTilesUp: []

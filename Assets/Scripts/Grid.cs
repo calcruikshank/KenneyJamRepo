@@ -7,56 +7,59 @@ public class Grid
 {
     private int width;
     private int height;
+    private int length;
     private float cellSize;
 
-    private int[,] gridArray;
+    private int[,,] gridArray;
 
     private GameObject[,] boardObjectArray;
-    public Grid(int width, int height, float cellSize)
+    public Grid(int width, int height, int length, float cellSize)
     {
         this.width = width;
         this.height = height;
+        this.length = length;
         this.cellSize = cellSize;
 
-        gridArray = new int[width, height];
+        gridArray = new int[width, height, length];
         boardObjectArray = new GameObject[width, height];
 
-        for (int x = -width; x < gridArray.GetLength(0); x++)
+
+        for (int x = -width + 1; x < gridArray.GetLength(0); x++)
         {
-            for (int z = -height; z < gridArray.GetLength(1); z++)
+            for (int y = 0; y < gridArray.GetLength(1); y++)
             {
-                Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x,z + 1), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x + 1,z), Color.white, 100f);
-                RandomWorldGenerator.singleton.CreateATileAtXYZ(GetWorldPositionMiddle(x, z), x, 0, z);   //We can add a y later but its 0 for now 
+                for (int z = -length + 1; z < gridArray.GetLength(2); z++)
+                {
+                    //RandomWorldGenerator.singleton.CreateATileAtXYZ(GetWorldPositionMiddle(x, y, z), x, y, z);
+                    RandomWorldGenerator.singleton.CreateATileSlot(GetWorldPositionMiddle(x, y, z), x, y, z);
+                }
             }
         }
 
-        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
     }
 
-
-    private Vector3 GetWorldPosition(int x, int z)
+    private Vector3 GetWorldPosition(int x, int y, int z)
     {
-        return new Vector3(x, 0, z) * cellSize;
+        return new Vector3(x, y, z) * cellSize;
     }
-    public Vector3 GetWorldPositionMiddle(int x, int z)
+    public Vector3 GetWorldPositionMiddle(int x, int y, int z)
     {
-        return new Vector3(x, 0, z) * cellSize + new Vector3(cellSize, 0, cellSize) * .5f;
+        return new Vector3(x, y, z) * cellSize + new Vector3(cellSize, cellSize, cellSize) * .5f;
     }
 
-    public Vector2Int GetXZ(Vector3 worldPosition)
+    public Vector3Int GetXYZ(Vector3 worldPosition)
     {
         int xv = Mathf.FloorToInt(worldPosition.x / cellSize);
         int zv = Mathf.FloorToInt(worldPosition.z / cellSize);
-        return new Vector2Int(xv,zv);
+        int yv = Mathf.FloorToInt(worldPosition.y / cellSize);
+        return new Vector3Int(xv,yv,zv);
     }
 
-    public void SetValue(int x, int z, int value)
+    public void SetValue(int x, int y, int z, int value)
     {
         if (x >= 0 && z >= 0 && x < width && z < height)
         {
-            gridArray[x, z] = value;
+            gridArray[x,y,z] = value;
         }
     }
 
