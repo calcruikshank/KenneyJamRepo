@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour
                     {
                         float targetAngleDive = Mathf.Atan2(currentBufferedInput.directionOfAction.x, currentBufferedInput.directionOfAction.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
                         Vector3 diveDir = Quaternion.Euler(0, targetAngleDive, 0) * Vector3.forward;
-                        Dive(diveDir);
+                        //Dive(diveDir);
                         inputQueue.Dequeue();
                     }
                 }
@@ -221,13 +221,17 @@ public class PlayerController : MonoBehaviour
         currentDashSpeed = dashSpeed;
         SetStateToDashing();
         canDash = false;
+
+        //anim
+        playerAnim.SetBool("dashing", true);
+        playerAnim.SetBool("falling", false);
     }
     private void HandleDash()
     {
         float powerDashSpeedMulti = 2f;
         currentDashSpeed -= currentDashSpeed * powerDashSpeedMulti * Time.deltaTime;
 
-        if (currentDashSpeed < 20f) { 
+        if (currentDashSpeed < 30f) { 
             SetStateToNormal();
             playerAnim.SetBool("dashing", false);
         }
@@ -252,8 +256,29 @@ public class PlayerController : MonoBehaviour
         grounded = false;
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.AddForce(Vector2.up * jumpHeight, ForceMode.Impulse);
+
+        //anim
+        if (state == State.Dashing)
+        {
+            if (jumpedOutOfDash)
+            {
+                playerAnim.SetTrigger("longjump");
+            }
+            else
+            {
+                playerAnim.SetTrigger("jump");
+            }
+        }
+        else
+        {
+            playerAnim.SetTrigger("jump");
+        }
+        playerAnim.SetBool("dashing", false);
+        playerAnim.SetBool("falling", false);
+
         SetStateToNormal();
     }
+
 
     private void HandleMovement()
     {
@@ -320,26 +345,12 @@ public class PlayerController : MonoBehaviour
     {
         BufferInput jumpBuffer = new BufferInput(KenneyJamData.InputActionType.JUMP, inputMovement, Time.time);
         inputQueue.Enqueue(jumpBuffer);
-
-        if(state == State.Dashing)
-        {
-            playerAnim.SetTrigger("longjump");
-        }
-        else
-        {
-            playerAnim.SetTrigger("jump");
-        }
-        playerAnim.SetBool("dashing", false);
-        playerAnim.SetBool("falling", false);
-
     }
 
     void OnDash()
     {
         BufferInput dashBuffer = new BufferInput(KenneyJamData.InputActionType.DASH, lastMoveDir.normalized, Time.time);
         inputQueue.Enqueue(dashBuffer);
-        playerAnim.SetBool("dashing", true);
-        playerAnim.SetBool("falling", false);
     }
     void OnDive()
     {
