@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     bool grounded;
     bool colliderIsTouchingGround;
     bool canDash = false;
+    public bool jumpedOutOfDash = false;
 
     public Transform cam;
 
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
         {
             grounded = true;
             canDash = true;
+            jumpedOutOfDash = false;
             currentNumOfExtraJumps = 0;
         }
 
@@ -153,7 +155,8 @@ public class PlayerController : MonoBehaviour
                     if (!grounded && !groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
                     {
                         currentNumOfExtraJumps++;
-                        rb.velocity = new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude);//todo
+                        rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
+                        transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
                         Jump();
                         inputQueue.Dequeue();
                     }
@@ -233,6 +236,14 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (state == State.Dashing)
+        {
+            jumpedOutOfDash = true;
+        }
+        if (state == State.Normal)
+        {
+            jumpedOutOfDash = false;
+        }
         groundHasNotBeenLeftAfterJumping = true;
         grounded = false;
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
@@ -255,7 +266,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), 3);
         }
 
-        if (!grounded && new Vector3(rb.velocity.x, 0, rb.velocity.z).magnitude <= (inputMovement * maxSpeed).magnitude)
+        if (!grounded && !jumpedOutOfDash)
         {
             rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
         }
@@ -277,6 +288,10 @@ public class PlayerController : MonoBehaviour
 
         if (movement.magnitude > 0)
         {
+            if (jumpedOutOfDash)
+            {
+                return;
+            }
             transform.rotation = Quaternion.RotateTowards(this.transform.rotation, Quaternion.Euler(0f, targetAngle, 0), 1000f * Time.deltaTime);
         }
     }
