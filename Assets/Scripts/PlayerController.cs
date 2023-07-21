@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
     bool groundHasNotBeenLeftAfterJumping = false;
     bool grounded;
     bool colliderIsTouchingGround;
+    bool canDash = false;
 
     public Transform cam;
 
@@ -61,12 +62,12 @@ public class PlayerController : MonoBehaviour
         HandleBufferInput();
         CheckForGround();
         GetLastMoveDirection();
-        FaceLookDirection();
 
         switch (state)
         {
             case State.Normal:
                 HandleMovement();
+                FaceLookDirection();
                 break;
             case State.Dashing:
                 HandleDash();
@@ -107,6 +108,7 @@ public class PlayerController : MonoBehaviour
         if (colliderIsTouchingGround && !groundHasNotBeenLeftAfterJumping)
         {
             grounded = true;
+            canDash = true;
             currentNumOfExtraJumps = 0;
         }
 
@@ -157,8 +159,13 @@ public class PlayerController : MonoBehaviour
                 {
                     if (state == State.Normal)
                     {
-                        Dash(moveDir);
-                        inputQueue.Dequeue();
+                        if (canDash)
+                        {
+                            float targetAngleDash = Mathf.Atan2(currentBufferedInput.directionOfAction.x, currentBufferedInput.directionOfAction.y) * Mathf.Rad2Deg + cam.eulerAngles.y;
+                            Vector3 moveDirDash = Quaternion.Euler(0, targetAngleDash, 0) * Vector3.forward;
+                            Dash(moveDirDash);
+                            inputQueue.Dequeue();
+                        }
                     }
                 }
             }
@@ -171,22 +178,24 @@ public class PlayerController : MonoBehaviour
 
     private void Dash(Vector2 directionOfDash)
     {
-        dashDir = directionOfDash.normalized;
+        transform.rotation = Quaternion.Euler(0f, targetAngle, 0);
+        dashDir = directionOfDash;
         currentDashSpeed = dashSpeed;
         SetStateToDashing();
+        canDash = false;
     }
     private void HandleDash()
     {
-        float powerDashSpeedMulti = 6f;
+        float powerDashSpeedMulti = 2f;
         currentDashSpeed -= currentDashSpeed * powerDashSpeedMulti * Time.deltaTime;
 
-        if (currentDashSpeed < 5f) { 
+        if (currentDashSpeed < 20f) { 
             SetStateToNormal();
         }
     }
     private void FixedHandleDash()
     {
-        rb.velocity = new Vector3(dashDir.x * currentDashSpeed, 0, dashDir.z * currentDashSpeed);
+        rb.velocity = new Vector3(transform.forward.x * currentDashSpeed, 0, transform.forward.z * currentDashSpeed);
     }
 
 
