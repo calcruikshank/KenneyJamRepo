@@ -316,10 +316,19 @@ public class PlayerController : MonoBehaviour
         if(new Vector3(rb.velocity.x,0f,rb.velocity.z).magnitude >= 0.15f)
         {
             playerAnim.SetBool("moving", true);
+            if (grounded)
+            {
+                playerAnim.speed = new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude / maxSpeed;
+            }
+            else
+            {
+                playerAnim.speed = 1f;
+            }
         }
         else
         {
             playerAnim.SetBool("moving", false);
+            playerAnim.speed = 1f;
         }
 
         if(rb.velocity.y <= -5f && playerAnim.GetBool("falling") == false)
