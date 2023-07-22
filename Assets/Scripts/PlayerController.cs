@@ -59,6 +59,10 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem groundParticles;
     public ParticleSystem jumpParticles;
 
+
+
+    float timerThresholdForFootstepMax = .15f;
+    public float footstepAudioTimer = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -464,7 +468,42 @@ public class PlayerController : MonoBehaviour
         movement.y = 0;
         movement.z = inputMovement.y;
         moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+
+
+
+        if (new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude >= 0.15f)
+        {
+            playerAnim.SetBool("moving", true);
+            if (grounded)
+            {
+                float currentFootstepThreshold = timerThresholdForFootstepMax / (new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude / maxSpeed);
+                footstepAudioTimer += Time.deltaTime;
+                if (footstepAudioTimer >= currentFootstepThreshold)
+                {
+                    AudioManager.singleton.PlayRandomCarpetStep();
+                    footstepAudioTimer = 0;
+                }
+                playerAnim.speed = new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude / maxSpeed;
+
+            }
+            else
+            {
+                playerAnim.speed = 1f;
+            }
+        }
+        else
+        {
+            playerAnim.SetBool("moving", false);
+            playerAnim.speed = 1f;
+        }
+
+        if (rb.velocity.y <= -5f && playerAnim.GetBool("falling") == false)
+        {
+            playerAnim.SetBool("falling", true);
+        }
+
     }
+
     private void HandleFixedMovement()
     {
         //instead of using move towards i want to keep the momentum of the rb if the current velocity is higher than the input velocity this way it will only ever add force in the direction of input
@@ -478,28 +517,6 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector3.MoveTowards(rb.velocity, new Vector3(moveDir.x * maxSpeed * movement.magnitude, rb.velocity.y, moveDir.z * maxSpeed * movement.magnitude), .5f);
         }
 
-        if(new Vector3(rb.velocity.x,0f,rb.velocity.z).magnitude >= 0.15f)
-        {
-            playerAnim.SetBool("moving", true);
-            if (grounded)
-            {
-                playerAnim.speed = new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude / maxSpeed;
-            }
-            else
-            {
-                playerAnim.speed = 1f;
-            }
-        }
-        else
-        {
-            playerAnim.SetBool("moving", false);
-            playerAnim.speed = 1f;
-        }
-
-        if(rb.velocity.y <= -5f && playerAnim.GetBool("falling") == false)
-        {
-            playerAnim.SetBool("falling", true);
-        }
     }
     float targetAngle;
     void FaceLookDirection()
