@@ -6,7 +6,8 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager singleton;
 
-    [SerializeField] public List<AudioClip> carpetSteps;
+    [SerializeField] public List<AudioClip> steps;
+    [SerializeField] public List<AudioClip> impact;
 
     [SerializeField] AudioSource soundFXAudioSource;
 
@@ -21,7 +22,13 @@ public class AudioManager : MonoBehaviour
 
     public void PlayRandomCarpetStep()
     {
-        soundFXAudioSource.clip = GetRandomClipFromGivenList(carpetSteps);
+        soundFXAudioSource.clip = GetRandomClipFromGivenList(steps);
+
+        soundFXAudioSource.Play();
+    }
+    public void PlayRandomImpact()
+    {
+        soundFXAudioSource.clip = GetRandomClipFromGivenList(impact);
 
         soundFXAudioSource.Play();
     }

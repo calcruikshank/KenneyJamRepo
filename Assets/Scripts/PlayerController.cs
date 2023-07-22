@@ -157,12 +157,17 @@ public class PlayerController : MonoBehaviour
 
         if (colliderIsTouchingGround && !groundHasNotBeenLeftAfterJumping)
         {
+            if (grounded == false)
+            {
+                AudioManager.singleton.PlayRandomImpact();
+            }
             grounded = true;
             if (timerForDashing >= timerForDashingThreshold)
             {
                 canDash = true;
             }
             jumpedOutOfDash = false;
+
             currentNumOfExtraJumps = 0;
         }
 
