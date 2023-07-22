@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour
 
     private bool CheckColliderGround(RaycastHit col)
     {
-        Debug.Log($"{Vector3.Dot(col.normal.normalized, Vector3.up)} bool result: {Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f}");
+        //Debug.Log($"{Vector3.Dot(col.normal.normalized, Vector3.up)} bool result: {Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f}");
         return (Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f);
 
     }
