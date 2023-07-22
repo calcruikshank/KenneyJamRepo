@@ -22,7 +22,12 @@ public class Chartable : MonoBehaviour
 
     private void ChartOnMap()
     {
-        this.GetComponentInChildren<SpriteRenderer>().enabled = true;
-        transform.localScale = Vector3.one * 3;
+        if (!GameManager.singleton.activeChartables.Contains(this))
+        {
+            this.GetComponentInChildren<SpriteRenderer>().enabled = true;
+            transform.localScale = Vector3.one * 3;
+
+            GameManager.singleton.activeChartables.Add(this);
+        }
     }
 }

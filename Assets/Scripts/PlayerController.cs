@@ -422,4 +422,18 @@ public class PlayerController : MonoBehaviour
     {
         state = State.Diving;
     }
+
+    void OnSelect()
+    {
+        if (!GameManager.singleton.fullMapTransform.gameObject.activeSelf)
+        {
+            GameManager.singleton.ActivateFullMap();
+            return;
+        }
+        if (GameManager.singleton.fullMapTransform.gameObject.activeSelf)
+        {
+            GameManager.singleton.DeactivateFullMap();
+            return;
+        }
+    }
 }
