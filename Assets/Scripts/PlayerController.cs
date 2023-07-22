@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
         CheckForGround();
         GetLastMoveDirection();
         HandleTimers();
+        CheckForLowDeath();
 
         switch (state)
         {
@@ -81,6 +82,16 @@ public class PlayerController : MonoBehaviour
             case State.Dashing:
                 HandleDash();
                 break;
+        }
+    }
+
+    private void CheckForLowDeath()
+    {
+        if (transform.position.y < -100)
+        {
+            transform.position = Vector3.zero;
+            rb.velocity = Vector3.zero;
+            SetStateToNormal();
         }
     }
 
