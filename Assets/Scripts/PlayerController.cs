@@ -109,6 +109,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    float coyoteTimerThreshold = .2f;
+    float coyoteTimer = 0f;
     private void CheckForGround()
     {
         RaycastHit hit;
@@ -128,9 +130,21 @@ public class PlayerController : MonoBehaviour
         {
             if (hit.collider == null)
             {
-                colliderIsTouchingGround = false;
+                if (colliderIsTouchingGround)
+                {
+                    coyoteTimer = 0;
+                    colliderIsTouchingGround = false;
+                }
+
+                coyoteTimer += Time.deltaTime;
+
+                if (coyoteTimer >= coyoteTimerThreshold && grounded)
+                {
+                    grounded = false;
+                }
                 groundHasNotBeenLeftAfterJumping = false;
-                grounded = false;
+
+                
             }
         }
 
