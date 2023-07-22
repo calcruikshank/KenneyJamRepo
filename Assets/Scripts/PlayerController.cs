@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     bool canDash = false;
     public bool jumpedOutOfDash = false;
 
+    public bool isOnWall = false;
+
     public Transform cam;
 
      float timerForDashing;
@@ -70,6 +72,7 @@ public class PlayerController : MonoBehaviour
     {
         HandleBufferInput();
         CheckForGround();
+        CheckForWall();
         GetLastMoveDirection();
         HandleTimers();
         CheckForLowDeath();
@@ -165,12 +168,69 @@ public class PlayerController : MonoBehaviour
         }
 
         var emission = groundParticles.emission;
-        emission.enabled = grounded;
+        emission.enabled = (grounded || isOnWall);
         playerAnim.SetBool("airborne", !grounded);
         if (grounded)
         {
             playerAnim.SetBool("falling", false);
         }
+    }
+
+    private void CheckForWall()
+    {
+        RaycastHit hit;
+
+
+        Collider[] cols = Physics.OverlapSphere(transform.position, 1.5f, groundLayer);
+        if (cols.Length > 0)
+        {
+            foreach(Collider col in cols)
+            {
+                if(col != null)
+                {
+                    if(Physics.Raycast(transform.position,col.transform.position - transform.position, out hit, 5f, groundLayer))
+                    {
+                        Debug.DrawRay(transform.localPosition, hit.normal * 20f, Color.red);
+
+                        if (!grounded && rb.velocity.y < -5f && CheckColliderWall(hit))
+                        {
+                            Debug.Log("Wall Checker Hit!");
+                            isOnWall = true;
+
+                            var lookDir = Quaternion.LookRotation(hit.normal.normalized, Vector3.up);
+                            transform.localRotation = lookDir;
+
+                        }
+                        else
+                        {
+                            isOnWall = false;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            isOnWall = false;
+        }
+
+        playerAnim.SetBool("wallslide", isOnWall);
+
+        if (isOnWall)
+        {
+            rb.drag = 4f;
+        }
+        else
+        {
+            rb.drag = 0f;
+        }
+    }
+
+    private bool CheckColliderWall(RaycastHit col)
+    {
+        Debug.Log($"{(Vector3.Dot(col.normal.normalized, Vector3.up))} returning {(Vector3.Dot(col.normal.normalized, Vector3.up) <= 0.8f && Vector3.Dot(col.normal.normalized, Vector3.up) >= -0.8f)}");
+        return (Vector3.Dot(col.normal.normalized, Vector3.up) <= 0.8f && Vector3.Dot(col.normal.normalized, Vector3.up) >= -0.8f);
+
     }
 
     private bool CheckColliderGround(RaycastHit col)
@@ -210,16 +270,31 @@ public class PlayerController : MonoBehaviour
                         canDash = true;
                         inputQueue.Dequeue();
                     }
-                    if (!grounded && !groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
+                    else
                     {
-                        currentNumOfExtraJumps++;
-                        if (movement.magnitude > 0)
+                        if(isOnWall)
                         {
-                            rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
+                            rb.velocity = new Vector3(transform.forward.x * maxSpeed, 0f, transform.forward.z * maxSpeed);
+                            Jump();
+                            inputQueue.Dequeue();
                         }
-                        Jump();
-                        inputQueue.Dequeue();
+                        else
+                        {
+                            //double jump
+                            if (!groundHasNotBeenLeftAfterJumping && currentNumOfExtraJumps < numOfExtraJumps)
+                            {
+                                currentNumOfExtraJumps++;
+                                if (movement.magnitude > 0)
+                                {
+                                    rb.velocity = new Vector3(moveDir.x * maxSpeed, rb.velocity.y, moveDir.z * maxSpeed);
+                                }
+                                Jump();
+                                inputQueue.Dequeue();
+                            }
+                        }           
                     }
+
+                    
                 }
                 if (currentBufferedInput.actionType == KenneyJamData.InputActionType.DASH)
                 {
@@ -325,11 +400,27 @@ public class PlayerController : MonoBehaviour
             {
                 if(currentNumOfExtraJumps > 0)
                 {
-                    playerAnim.SetTrigger("doublejump");
+                    if (isOnWall)
+                    {
+                        playerAnim.SetTrigger("walljump");
+                    }
+                    else
+                    {
+                        playerAnim.SetTrigger("doublejump");
+
+                    }
                 }
                 else
                 {
-                    playerAnim.SetTrigger("jump");
+                    if (isOnWall)
+                    {
+                        playerAnim.SetTrigger("walljump");
+                    }
+                    else
+                    {
+                        playerAnim.SetTrigger("jump");
+
+                    }
                 }
             }
         }
@@ -337,11 +428,27 @@ public class PlayerController : MonoBehaviour
         {
             if (currentNumOfExtraJumps > 0)
             {
-                playerAnim.SetTrigger("doublejump");
+                if (isOnWall)
+                {
+                    playerAnim.SetTrigger("walljump");
+                }
+                else
+                {
+                    playerAnim.SetTrigger("doublejump");
+
+                }
             }
             else
             {
-                playerAnim.SetTrigger("jump");
+                if (isOnWall)
+                {
+                    playerAnim.SetTrigger("walljump");
+                }
+                else
+                {
+                    playerAnim.SetTrigger("jump");
+
+                }
             }
         }
         jumpParticles.Play();
@@ -402,7 +509,7 @@ public class PlayerController : MonoBehaviour
 
         if (movement.magnitude > 0)
         {
-            if (jumpedOutOfDash)
+            if (jumpedOutOfDash || isOnWall)
             {
                 return;
             }
