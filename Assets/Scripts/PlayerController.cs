@@ -250,7 +250,7 @@ public class PlayerController : MonoBehaviour
         currentDashSpeed = dashSpeed;
         SetStateToDashing();
         canDash = false;
-
+        groundHasNotBeenLeftAfterJumping = false;
         //anim
         playerAnim.SetBool("dashing", true);
         playerAnim.SetBool("falling", false);
