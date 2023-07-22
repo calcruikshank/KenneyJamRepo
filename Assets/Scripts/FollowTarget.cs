@@ -10,7 +10,7 @@ public class FollowTarget : MonoBehaviour
     {
         if (target != null)
         {
-            this.transform.position = new Vector3( target.transform.position.x, 10, target.transform.position.z);
+            this.transform.position = new Vector3( target.transform.position.x, 100, target.transform.position.z);
         }
     }
 }
