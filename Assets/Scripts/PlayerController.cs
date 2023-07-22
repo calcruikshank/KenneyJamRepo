@@ -323,12 +323,26 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                playerAnim.SetTrigger("jump");
+                if(currentNumOfExtraJumps > 0)
+                {
+                    playerAnim.SetTrigger("doublejump");
+                }
+                else
+                {
+                    playerAnim.SetTrigger("jump");
+                }
             }
         }
         else
         {
-            playerAnim.SetTrigger("jump");
+            if (currentNumOfExtraJumps > 0)
+            {
+                playerAnim.SetTrigger("doublejump");
+            }
+            else
+            {
+                playerAnim.SetTrigger("jump");
+            }
         }
         jumpParticles.Play();
         playerAnim.SetBool("dashing", false);
