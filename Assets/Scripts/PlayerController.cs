@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.HID;
 
 public class PlayerController : MonoBehaviour
 {
@@ -112,20 +113,25 @@ public class PlayerController : MonoBehaviour
     {
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.BoxCast(transform.position, transform.GetComponent<Collider>().bounds.size / 2, transform.TransformDirection(Vector3.down), out hit, Quaternion.identity, 1.1f, groundLayer))
+        if (Physics.BoxCast(transform.position, transform.GetComponent<Collider>().bounds.size / 3f, transform.TransformDirection(Vector3.down), out hit, Quaternion.identity, 1.25f, groundLayer))
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-        }
 
-        if (hit.collider != null)
-        {
-            colliderIsTouchingGround = true;
+            colliderIsTouchingGround = CheckColliderGround(hit);
+            if (!colliderIsTouchingGround)
+            {
+                groundHasNotBeenLeftAfterJumping = false;
+            }
+
         }
-        if (hit.collider == null)
+        else
         {
-            colliderIsTouchingGround = false;
-            groundHasNotBeenLeftAfterJumping = false;
-            grounded = false;
+            if (hit.collider == null)
+            {
+                colliderIsTouchingGround = false;
+                groundHasNotBeenLeftAfterJumping = false;
+                grounded = false;
+            }
         }
 
         if (colliderIsTouchingGround && !groundHasNotBeenLeftAfterJumping)
@@ -151,6 +157,13 @@ public class PlayerController : MonoBehaviour
         {
             playerAnim.SetBool("falling", false);
         }
+    }
+
+    private bool CheckColliderGround(RaycastHit col)
+    {
+        Debug.Log($"{Vector3.Dot(col.normal.normalized, Vector3.up)} bool result: {Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f}");
+        return (Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f);
+
     }
 
     void FixedUpdate()
