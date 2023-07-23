@@ -241,14 +241,14 @@ public class PlayerController : MonoBehaviour
     private bool CheckColliderWall(RaycastHit col)
     {
         Debug.Log($"{(Vector3.Dot(col.normal.normalized, Vector3.up))} returning {(Vector3.Dot(col.normal.normalized, Vector3.up) <= 0.8f && Vector3.Dot(col.normal.normalized, Vector3.up) >= -0.8f)}");
-        return (Vector3.Dot(col.normal.normalized, Vector3.up) <= 0.8f && Vector3.Dot(col.normal.normalized, Vector3.up) >= -0.8f);
+        return (Vector3.Dot(col.normal.normalized, Vector3.up) <= 0.65f && Vector3.Dot(col.normal.normalized, Vector3.up) >= -0.65f);
 
     }
 
     private bool CheckColliderGround(RaycastHit col)
     {
         //Debug.Log($"{Vector3.Dot(col.normal.normalized, Vector3.up)} bool result: {Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f}");
-        return (Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.90f);
+        return (Vector3.Dot(col.normal.normalized, Vector3.up) >= 0.65f);
 
     }
 

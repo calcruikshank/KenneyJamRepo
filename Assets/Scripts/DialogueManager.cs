@@ -55,7 +55,7 @@ public class DialogueManager : MonoBehaviour
         dialogueBoxTransform.gameObject.SetActive(false);
     }
 
-    public Queue<string> sentences;
+    public Queue<string> sentences = new Queue<string>();
 
 
 
