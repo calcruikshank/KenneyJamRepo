@@ -159,7 +159,10 @@ public class PlayerController : MonoBehaviour
         {
             if (grounded == false)
             {
-                AudioManager.singleton.PlayRandomImpact();
+                if (AudioManager.singleton != null )
+                {
+                    AudioManager.singleton.PlayRandomImpact();
+                }
             }
             grounded = true;
             if (timerForDashing >= timerForDashingThreshold)
@@ -485,7 +488,10 @@ public class PlayerController : MonoBehaviour
                 footstepAudioTimer += Time.deltaTime;
                 if (footstepAudioTimer >= currentFootstepThreshold)
                 {
-                    AudioManager.singleton.PlayRandomCarpetStep();
+                    if (AudioManager.singleton != null)
+                    {
+                        AudioManager.singleton.PlayRandomCarpetStep();
+                    }
                     footstepAudioTimer = 0;
                 }
                 playerAnim.speed = new Vector3(rb.velocity.x, 0f, rb.velocity.z).magnitude / maxSpeed;
@@ -552,7 +558,10 @@ public class PlayerController : MonoBehaviour
 
     void OnJump()
     {
-        DialogueManager.singleton.DisplayNextSentence();
+        if (DialogueManager.singleton != null)
+        {
+            DialogueManager.singleton.DisplayNextSentence();
+        }
 
         BufferInput jumpBuffer = new BufferInput(KenneyJamData.InputActionType.JUMP, inputMovement, Time.time);
         inputQueue.Enqueue(jumpBuffer);
@@ -584,6 +593,10 @@ public class PlayerController : MonoBehaviour
 
     void OnSelect()
     {
+        if (GameManager.singleton == null)
+        {
+            return;
+        }
         if (!GameManager.singleton.fullMapTransform.gameObject.activeSelf)
         {
             GameManager.singleton.ActivateFullMap();
