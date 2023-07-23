@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] Transform playerSprite;
 
-
+    [SerializeField] TextMeshProUGUI completionText;
     private void Awake()
     {
         if (singleton != null)
@@ -55,7 +56,7 @@ public class GameManager : MonoBehaviour
 
         percantageDone = (float)activeChartables.Count / (float)allChartables.Count;
         percantageDone *= 100;
-
+        completionText.text = "Map progress: " + (int)percantageDone + "%";
         Debug.Log(percantageDone + " all charts " + allChartables.Count + " active " + activeChartables.Count);
     }
 
