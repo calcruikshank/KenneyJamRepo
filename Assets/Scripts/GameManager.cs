@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
     {
         foreach (Chartable c in activeChartables)
         {
-            Debug.Log(c.transform.localScale);
             c.transform.localScale = Vector3.one * 9 ;
         }
         fullMapTransform.gameObject.SetActive(true);

@@ -552,6 +552,8 @@ public class PlayerController : MonoBehaviour
 
     void OnJump()
     {
+        DialogueManager.singleton.DisplayNextSentence();
+
         BufferInput jumpBuffer = new BufferInput(KenneyJamData.InputActionType.JUMP, inputMovement, Time.time);
         inputQueue.Enqueue(jumpBuffer);
     }
@@ -593,4 +595,5 @@ public class PlayerController : MonoBehaviour
             return;
         }
     }
+
 }
