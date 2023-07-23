@@ -615,6 +615,34 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &85021743 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
+  m_PrefabInstance: {fileID: 93996473}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &85021746
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85021743}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.71
+  m_Height: 2.01
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.36, z: 0}
 --- !u!1001 &93828808
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -864,6 +892,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: grumbo
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1820291678746426385, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -89.98021
@@ -945,7 +977,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -4875948652119998980, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
       insertIndex: -1
       addedObject: {fileID: 368710286}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 85021746}
   m_SourcePrefab: {fileID: 100100000, guid: 57510a99a5eead543ab34d08a76a1c21, type: 3}
 --- !u!1001 &95987967
 PrefabInstance:
@@ -22751,10 +22786,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: barrel
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1919861392}
   m_SourcePrefab: {fileID: 100100000, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
 --- !u!1 &799149487
 GameObject:
@@ -32977,11 +33019,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 933777a131acb7f488306171f8c0d529, type: 3}
   m_PrefabInstance: {fileID: 1889279805}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1919861388 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
+  m_PrefabInstance: {fileID: 797080892}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1919861391 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
   m_PrefabInstance: {fileID: 797080892}
   m_PrefabAsset: {fileID: 0}
+--- !u!64 &1919861392
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919861388}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -8891861079320426144, guid: 689bf9ed604c7c94ba43197cee48e41e, type: 3}
 --- !u!1 &1925667124
 GameObject:
   m_ObjectHideFlags: 0
