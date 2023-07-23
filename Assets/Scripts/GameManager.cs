@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager singleton;
 
     public List<Chartable> activeChartables = new List<Chartable>();
+    public List<Chartable> allChartables = new List<Chartable>();
 
     [SerializeField] public Transform fullMapTransform;
 
@@ -44,6 +46,19 @@ public class GameManager : MonoBehaviour
         
         playerSprite.localScale = Vector3.one * 9 * 2;
     }
+
+    public float percantageDone = 0;
+
+    internal void AddActiveChartable(Chartable chartable)
+    {
+        activeChartables.Add(chartable);
+
+        percantageDone = (float)activeChartables.Count / (float)allChartables.Count;
+        percantageDone *= 100;
+
+        Debug.Log(percantageDone + " all charts " + allChartables.Count + " active " + activeChartables.Count);
+    }
+
     public void DeactivateFullMap()
     {
         fullMapTransform.gameObject.SetActive(false);

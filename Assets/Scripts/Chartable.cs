@@ -8,6 +8,8 @@ public class Chartable : MonoBehaviour
     private void Start()
     {
         this.transform.rotation = Quaternion.Euler(Vector3.zero);
+
+        GameManager.singleton.allChartables.Add(this);
         transform.parent = null;
     }
     void OnTriggerEnter(Collider other)
@@ -27,7 +29,7 @@ public class Chartable : MonoBehaviour
             this.GetComponentInChildren<SpriteRenderer>().enabled = true;
             transform.localScale = Vector3.one * 3;
 
-            GameManager.singleton.activeChartables.Add(this);
+            GameManager.singleton.AddActiveChartable(this);
         }
     }
 }
