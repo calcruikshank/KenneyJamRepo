@@ -44,7 +44,6 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
-
         string sentence = sentences.Dequeue();
 
         this.dialogueText.text = sentence;
@@ -59,11 +58,6 @@ public class DialogueManager : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        sentences = new Queue<string>();
-    }
 
     // Update is called once per frame
     void Update()
