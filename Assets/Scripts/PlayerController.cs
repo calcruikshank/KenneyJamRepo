@@ -1,11 +1,13 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     public Queue<BufferInput> inputQueue = new Queue<BufferInput>();
 
@@ -66,14 +68,27 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+        cam = Camera.main.transform;
+
+        FindObjectOfType<CinemachineFreeLook>().LookAt = this.transform;
+        FindObjectOfType<CinemachineFreeLook>().Follow = this.transform;
         rb = this.GetComponent<Rigidbody>();
         col = this.GetComponent<Collider>();
         state = State.Normal;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         HandleBufferInput();
         CheckForGround();
         CheckForWall();
@@ -254,6 +269,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         switch (state)
         {
             case State.Normal:
