@@ -74,8 +74,11 @@ public class PlayerController : NetworkBehaviour
         }
         cam = Camera.main.transform;
 
+
+
         FindObjectOfType<CinemachineFreeLook>().LookAt = this.transform;
         FindObjectOfType<CinemachineFreeLook>().Follow = this.transform;
+        FindObjectOfType<FollowTarget>().target = this.transform;
         rb = this.GetComponent<Rigidbody>();
         col = this.GetComponent<Collider>();
         state = State.Normal;

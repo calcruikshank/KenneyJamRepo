@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowTarget : MonoBehaviour
 {
-    [SerializeField] Transform target;
+    [SerializeField] public Transform target;
 
     private void Update()
     {
